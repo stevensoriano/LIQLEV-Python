@@ -1,0 +1,15 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Results and Data
+results/
+*.xlsx
+*.csv
+!data/5s_drop_tower_extracted_ax_positive_data.csv # Keep the input data, but ignore output data
+
+# Virtual Environments
+venv/
+env/
+.env

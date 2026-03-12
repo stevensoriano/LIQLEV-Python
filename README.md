@@ -48,7 +48,7 @@ LIQLEV-Python-Simulation/
 
 1. Clone the repository:
 ```bash
-git clone [https://github.com/yourusername/LIQLEV-Python-Simulation.git](https://github.com/yourusername/LIQLEV-Python-Simulation.git)
+git clone [https://github.com/stevensoriano/LIQLEV-Python-Simulation.git](https://github.com/stevensoriano/LIQLEV-Python-Simulation.git)
 cd LIQLEV-Python-Simulation
 ```
 

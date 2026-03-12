@@ -24,7 +24,7 @@ def get_config():
     # Directory where the output CSV files will be saved.
     config['OUTPUT_FILE'] = r"./results/python_results.csv"
     # Path to the CSV containing transient gravity data (time vs. acceleration in g's).
-    config['GRAVITY_FILE'] = r'./data/5s_drop_tower_extracted_ax_positive_data.csv'
+    config['GRAVITY_FILE'] = r'./data/5s_drop_tower_extracted_az_positive_data.csv'
 
     # =========================================================================
     # 2. FLUID & THERMODYNAMIC SETTINGS
@@ -115,7 +115,7 @@ def get_config():
 
             # Get original data from the file
             tggo_g = g_df['normalized_time'].to_numpy()
-            xggo_g = g_df['ax_positive'].to_numpy()
+            xggo_g = g_df['az_positive'].to_numpy()
             
             # Store the end time of the *original* data for plotting reference
             last_original_data_time = tggo_g[-1]

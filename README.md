@@ -62,7 +62,7 @@ pip install -r requirements.txt
 1. **Configure the Simulation:** Open `config.py` to adjust the simulation parameters. This file acts as the central interface where you can set the `'FLUID'` (e.g., Nitrogen, Hydrogen), `'VENT_RATES'`, `'INITIAL_FILL_FRACTIONS'`, and tank dimensions.
 2. **Manage Gravity Profiles:** The simulation can run using either a constant gravity level or a transient gravity profile (like a drop tower or parabolic flight) provided via a CSV file. Open `config.py` and locate the **GRAVITY SETTINGS** section to toggle between these modes:
     * **To use a constant gravity level:** Set `config['USE_CONSTANT_GRAVITY'] = True`. You can then define the exact g-level by changing `config['CONSTANT_GRAVITY_G']` (e.g., `0.001`).
-    * **To use a transient gravity CSV:** Set `config['USE_CONSTANT_GRAVITY'] = False`. Place your custom CSV file inside the `data/` folder and ensure the `config['GRAVITY_FILE']` path points to it. The CSV must contain columns named `normalized_time` (seconds) and `ax_positive` (g's). If the simulation duration exceeds the length of the CSV data, the model will automatically hold the final gravity value constant for the remainder of the run.
+    * **To use a transient gravity CSV:** Set `config['USE_CONSTANT_GRAVITY'] = False`. Place your custom CSV file inside the `data/` folder and ensure the `config['GRAVITY_FILE']` path points to it. The CSV must contain columns named `normalized_time` (seconds) and `az_positive` (g's). If the simulation duration exceeds the length of the CSV data, the model will automatically hold the final gravity value constant for the remainder of the run.
 3. **Run the Model:**
 ```bash
 python main.py

@@ -27,35 +27,62 @@ from core import liqlev_simulation
 from thermo_utils import Tsat, Psat, DensitySat, build_property_table
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  THEME — Aerospace Dark
+#  THEME — Dark / Light
 # ═════════════════════════════════════════════════════════════════════════════
-GH = dict(
-    bg          = "#000000",       # Pure black — like SpaceX telemetry screens
-    surface     = "#0a0a0f",       # Near-black panel
-    overlay     = "#111118",       # Slightly lifted surface
-    border      = "#1e1e2a",       # Subtle dark border
-    text        = "#e8eaed",       # Crisp white-gray
-    text2       = "#9aa0a6",       # Secondary text
-    muted       = "#5f6368",       # Muted labels
-    blue        = "#4da6ff",       # Aerospace blue (SpaceX webcast style)
-    green       = "#00c853",       # Bright mission-go green
+_THEME_DARK = dict(
+    bg          = "#000000",
+    surface     = "#0a0a0f",
+    overlay     = "#111118",
+    border      = "#1e1e2a",
+    text        = "#e8eaed",
+    text2       = "#9aa0a6",
+    muted       = "#5f6368",
+    blue        = "#4da6ff",
+    green       = "#00c853",
     green_hover = "#00e676",
-    red         = "#ff1744",       # Abort red
-    orange      = "#ffab00",       # Caution amber
-    purple      = "#7c4dff",       # Highlight purple
-    header      = "#000000",       # Black header
-    input_bg    = "#05050a",       # Deep input fields
+    red         = "#ff1744",
+    orange      = "#ffab00",
+    purple      = "#7c4dff",
+    header      = "#000000",
+    input_bg    = "#05050a",
     btn_secondary     = "#141420",
     btn_secondary_hov = "#1a1a2e",
-    accent      = "#005288",       # SpaceX brand blue (used sparingly)
-    cyan        = "#18ffff",       # Telemetry cyan for emphasis
+    accent      = "#005288",
+    cyan        = "#18ffff",
 )
 
-# Plot styling — dark aerospace telemetry look
-PLOT_BG   = "#000000"
-PLOT_FACE = "#05050a"
-PLOT_GRID = "#1a1a2e"
-PLOT_TEXT = "#e8eaed"
+_THEME_LIGHT = dict(
+    bg          = "#f0f2f5",
+    surface     = "#ffffff",
+    overlay     = "#e8ecf0",
+    border      = "#c0c8d0",
+    text        = "#1a1a2e",
+    text2       = "#3c4450",
+    muted       = "#6b7685",
+    blue        = "#0066cc",
+    green       = "#00873e",
+    green_hover = "#00a64a",
+    red         = "#cc1430",
+    orange      = "#cc8800",
+    purple      = "#5c33cc",
+    header      = "#ffffff",
+    input_bg    = "#f7f8fa",
+    btn_secondary     = "#dde2e8",
+    btn_secondary_hov = "#cdd3da",
+    accent      = "#005288",
+    cyan        = "#007a8c",
+)
+
+_PLOT_DARK = dict(bg="#000000", face="#05050a", grid="#1a1a2e", text="#e8eaed")
+_PLOT_LIGHT = dict(bg="#f0f2f5", face="#ffffff", grid="#c0c8d0", text="#1a1a2e")
+
+# Active theme dicts — mutable, swapped at runtime
+GH = dict(_THEME_DARK)
+
+PLOT_BG   = _PLOT_DARK["bg"]
+PLOT_FACE = _PLOT_DARK["face"]
+PLOT_GRID = _PLOT_DARK["grid"]
+PLOT_TEXT  = _PLOT_DARK["text"]
 PLOT_COLORS = ["#4da6ff", "#00c853", "#ffab00", "#ff4081",
                "#7c4dff", "#ff6e40", "#18ffff", "#69f0ae"]
 
@@ -356,6 +383,19 @@ class LIQLEVApp(ctk.CTk):
             text_color=GH["text2"]
         ).pack(side="left", padx=(0, 16), pady=8)
 
+        # Theme toggle button
+        self._dark_mode = True
+        self._theme_btn = ctk.CTkButton(
+            hdr, text="\u263e DARK", width=80, height=24,
+            corner_radius=12,
+            font=ctk.CTkFont(family="Consolas", size=10, weight="bold"),
+            fg_color=GH["btn_secondary"],
+            hover_color=GH["btn_secondary_hov"],
+            text_color=GH["text2"],
+            border_color=GH["border"], border_width=1,
+            command=self._toggle_theme)
+        self._theme_btn.pack(side="right", padx=(0, 12), pady=8)
+
         # Unit toggle button — pill style
         self._si_mode = False
         self._unit_btn = ctk.CTkButton(
@@ -367,7 +407,7 @@ class LIQLEVApp(ctk.CTk):
             text_color=GH["text2"],
             border_color=GH["border"], border_width=1,
             command=self._toggle_units)
-        self._unit_btn.pack(side="right", padx=(0, 12), pady=8)
+        self._unit_btn.pack(side="right", padx=(0, 4), pady=8)
 
         ctk.CTkLabel(
             hdr, text="UNITS",
@@ -1921,6 +1961,155 @@ class LIQLEVApp(ctk.CTk):
         except Exception as e:
             messagebox.showerror("Clipboard Error", str(e))
 
+    # ─────────────────────────────────────────────────────────────────────
+    #  THEME TOGGLE
+    # ─────────────────────────────────────────────────────────────────────
+    def _toggle_theme(self):
+        """Switch between dark and light mode."""
+        global PLOT_BG, PLOT_FACE, PLOT_GRID, PLOT_TEXT
+
+        self._dark_mode = not self._dark_mode
+        src = _THEME_DARK if self._dark_mode else _THEME_LIGHT
+        psrc = _PLOT_DARK if self._dark_mode else _PLOT_LIGHT
+
+        # Swap global theme dicts
+        GH.update(src)
+        PLOT_BG   = psrc["bg"]
+        PLOT_FACE = psrc["face"]
+        PLOT_GRID = psrc["grid"]
+        PLOT_TEXT  = psrc["text"]
+
+        # Update button label
+        if self._dark_mode:
+            self._theme_btn.configure(text="\u263e DARK")
+        else:
+            self._theme_btn.configure(text="\u2600 LIGHT")
+
+        # Apply to all widgets recursively
+        self._apply_theme()
+
+        # Redraw current plot if results exist
+        if self._results:
+            self._update_plot()
+
+    def _apply_theme(self):
+        """Recursively apply the current GH theme to all widgets."""
+        # Root window
+        self.configure(fg_color=GH["bg"])
+
+        # Walk all widgets and re-color based on type
+        self._recolor_widgets(self)
+
+        # Re-style the figure canvas background
+        self.fig.set_facecolor(PLOT_BG)
+        for ax in self.fig.get_axes():
+            ax.set_facecolor(PLOT_FACE)
+        self.canvas.draw_idle()
+
+    def _recolor_widgets(self, parent):
+        """Recursively update widget colors for the active theme."""
+        for child in parent.winfo_children():
+            cls = type(child).__name__
+
+            try:
+                if cls in ("CTkFrame", "CTkScrollableFrame"):
+                    fg = child.cget("fg_color")
+                    # Map old colors to new theme
+                    if fg in (_THEME_DARK["bg"], _THEME_LIGHT["bg"]):
+                        child.configure(fg_color=GH["bg"])
+                    elif fg in (_THEME_DARK["surface"], _THEME_LIGHT["surface"]):
+                        child.configure(fg_color=GH["surface"])
+                    elif fg in (_THEME_DARK["overlay"], _THEME_LIGHT["overlay"]):
+                        child.configure(fg_color=GH["overlay"])
+                    elif fg in (_THEME_DARK["header"], _THEME_LIGHT["header"]):
+                        child.configure(fg_color=GH["header"])
+                    elif fg in (_THEME_DARK["btn_secondary"],
+                                _THEME_LIGHT["btn_secondary"]):
+                        child.configure(fg_color=GH["btn_secondary"])
+                    # Update border if present
+                    try:
+                        bc = child.cget("border_color")
+                        if bc in (_THEME_DARK["border"], _THEME_LIGHT["border"]):
+                            child.configure(border_color=GH["border"])
+                    except Exception:
+                        pass
+                    # Scrollbar colors
+                    try:
+                        child.configure(
+                            scrollbar_button_color=GH["border"],
+                            scrollbar_button_hover_color=GH["muted"])
+                    except Exception:
+                        pass
+
+                elif cls == "CTkLabel":
+                    tc = child.cget("text_color")
+                    if tc in (_THEME_DARK["text"], _THEME_LIGHT["text"]):
+                        child.configure(text_color=GH["text"])
+                    elif tc in (_THEME_DARK["text2"], _THEME_LIGHT["text2"]):
+                        child.configure(text_color=GH["text2"])
+                    elif tc in (_THEME_DARK["muted"], _THEME_LIGHT["muted"]):
+                        child.configure(text_color=GH["muted"])
+                    elif tc in (_THEME_DARK["cyan"], _THEME_LIGHT["cyan"]):
+                        child.configure(text_color=GH["cyan"])
+                    elif tc in (_THEME_DARK["blue"], _THEME_LIGHT["blue"]):
+                        child.configure(text_color=GH["blue"])
+                    elif tc in (_THEME_DARK["orange"], _THEME_LIGHT["orange"]):
+                        child.configure(text_color=GH["orange"])
+                    # Label backgrounds
+                    try:
+                        fg = child.cget("fg_color")
+                        if fg in (_THEME_DARK["green"], _THEME_LIGHT["green"]):
+                            child.configure(fg_color=GH["green"])
+                    except Exception:
+                        pass
+
+                elif cls == "CTkButton":
+                    fg = child.cget("fg_color")
+                    if fg in (_THEME_DARK["btn_secondary"],
+                              _THEME_LIGHT["btn_secondary"]):
+                        child.configure(
+                            fg_color=GH["btn_secondary"],
+                            hover_color=GH["btn_secondary_hov"],
+                            text_color=GH["text2"],
+                            border_color=GH["border"])
+                    elif fg in (_THEME_DARK["green"], _THEME_LIGHT["green"]):
+                        child.configure(
+                            fg_color=GH["green"],
+                            hover_color=GH["green_hover"])
+                    elif fg in (_THEME_DARK["blue"], _THEME_LIGHT["blue"]):
+                        child.configure(fg_color=GH["blue"])
+                    elif fg in (_THEME_DARK["red"], _THEME_LIGHT["red"]):
+                        child.configure(fg_color=GH["red"])
+
+                elif cls == "CTkEntry":
+                    child.configure(
+                        fg_color=GH["input_bg"],
+                        text_color=GH["text"],
+                        border_color=GH["border"])
+
+                elif cls == "CTkOptionMenu":
+                    child.configure(
+                        fg_color=GH["input_bg"],
+                        button_color=GH["border"],
+                        button_hover_color=GH["muted"],
+                        text_color=GH["text"])
+
+                elif cls == "CTkTextbox":
+                    child.configure(
+                        fg_color=GH["surface"],
+                        text_color=GH["text"])
+
+                elif cls == "CTkProgressBar":
+                    child.configure(
+                        fg_color=GH["border"],
+                        progress_color=GH["blue"])
+
+            except Exception:
+                pass  # Some widgets may not support all cget/configure calls
+
+            # Recurse into children
+            self._recolor_widgets(child)
+
     def _toggle_units(self):
         """Toggle between Imperial and SI display units.
 
@@ -3059,6 +3248,7 @@ class LIQLEVApp(ctk.CTk):
             return
 
         config = {
+            "dark_mode": self._dark_mode,
             "si_mode": self._si_mode,
             "fluid": self.fluid_var.get(),
             "pinit": self.pinit_var.get(),
@@ -3138,6 +3328,11 @@ class LIQLEVApp(ctk.CTk):
         # Config values are stored in whatever unit mode was active when saved.
         # First, match our current mode to the config's mode so values load
         # correctly.  Then switch to the saved mode.
+        # Restore theme mode
+        config_dark = config.get("dark_mode", True)
+        if self._dark_mode != config_dark:
+            self._toggle_theme()
+
         config_si = config.get("si_mode", False)
         # Temporarily switch to the config's unit mode so values load directly
         if self._si_mode != config_si:

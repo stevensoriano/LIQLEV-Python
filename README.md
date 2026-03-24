@@ -18,7 +18,7 @@ This project is a complete Python reimplementation of the original Fortran LIQLE
 - **Monte Carlo Analysis** — Randomized sampling across vent rate, fill fraction, and gravity ranges with histogram output and 1σ/2σ confidence bands
 
 ### GUI & Visualization
-- **Interactive Dark-Theme GUI** — SpaceX-inspired aerospace dark theme built with CustomTkinter
+- **Interactive GUI** — Dark theme built with CustomTkinter
 - **Embedded Matplotlib Plots** — Interactive dark-themed plots with crosshair cursor, copy-to-clipboard, and adjustable font scaling (A+/A−)
 - **Plot Overlay** — Superimpose results from multiple parameter combinations on a single plot for direct comparison
 - **7 Plot Types** — Dimensionless liquid level rise (dh/h₀), liquid level rise (inches), tank pressure, vent rate profile, epsilon, diagnostics (superheat + dP/dt), and vapor generation (BL volume + gravity)

@@ -13,3 +13,11 @@ results/
 venv/
 env/
 .env
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Claude Code
+.claude/

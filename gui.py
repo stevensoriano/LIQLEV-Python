@@ -1989,7 +1989,7 @@ class LIQLEVApp(ctk.CTk):
         self._apply_theme()
 
         # Redraw current plot if results exist
-        if self._results:
+        if self.sweep_results:
             self._update_plot()
 
     def _apply_theme(self):
